@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import Button from '../components/ui/Button';
@@ -10,12 +10,15 @@ const Signup: React.FC = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<'resident' | 'provider'>('resident');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data: { user }, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -26,15 +29,21 @@ const Signup: React.FC = () => {
       });
 
       if (signUpError) throw signUpError;
-      
-      navigate(ROUTES.DASHBOARD);
+
+      if (!user) {
+        throw new Error('Failed to create user');
+      }
+
+      // Profile creation is handled by the database trigger
     } catch (err) {
+      console.error('Signup error:', err);
       setError('Failed to create account. Please try again.');
+      setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-dark/80 backdrop-blur-sm pt-20">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-dark/80 backdrop-blur-sm">
       <div className="relative bg-background-light p-8 rounded-lg shadow-xl w-full max-w-md border border-primary/20 m-4">
         <Link to={ROUTES.HOME} className="absolute right-4 top-4 text-gray-400 hover:text-white">
           <X className="w-6 h-6" />
@@ -58,6 +67,7 @@ const Signup: React.FC = () => {
               className="mt-1 block w-full rounded-md bg-background-dark border-primary/20 text-white placeholder-gray-400 focus:border-primary focus:ring focus:ring-primary/20"
               required
               placeholder="Enter your email"
+              disabled={loading}
             />
           </div>
           <div>
@@ -72,39 +82,52 @@ const Signup: React.FC = () => {
               className="mt-1 block w-full rounded-md bg-background-dark border-primary/20 text-white placeholder-gray-400 focus:border-primary focus:ring focus:ring-primary/20"
               required
               placeholder="Enter your password"
+              disabled={loading}
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">Account Type</label>
             <div className="grid grid-cols-2 gap-4">
-              <label className="flex items-center justify-center p-4 rounded-lg border border-primary/20 bg-background-dark cursor-pointer hover:border-primary/40 transition-colors">
+              <label className={`flex items-center justify-center p-4 rounded-lg border cursor-pointer transition-colors ${
+                role === 'resident'
+                  ? 'border-primary bg-primary/10 text-primary-light'
+                  : 'border-primary/20 bg-background-dark text-gray-400 hover:border-primary/40'
+              }`}>
                 <input
                   type="radio"
                   value="resident"
                   checked={role === 'resident'}
                   onChange={(e) => setRole(e.target.value as 'resident')}
                   className="sr-only"
+                  disabled={loading}
                 />
-                <span className={`text-sm ${role === 'resident' ? 'text-primary-light' : 'text-gray-400'}`}>
-                  Resident
-                </span>
+                <span>Resident</span>
               </label>
-              <label className="flex items-center justify-center p-4 rounded-lg border border-primary/20 bg-background-dark cursor-pointer hover:border-primary/40 transition-colors">
+              <label className={`flex items-center justify-center p-4 rounded-lg border cursor-pointer transition-colors ${
+                role === 'provider'
+                  ? 'border-primary bg-primary/10 text-primary-light'
+                  : 'border-primary/20 bg-background-dark text-gray-400 hover:border-primary/40'
+              }`}>
                 <input
                   type="radio"
                   value="provider"
                   checked={role === 'provider'}
                   onChange={(e) => setRole(e.target.value as 'provider')}
                   className="sr-only"
+                  disabled={loading}
                 />
-                <span className={`text-sm ${role === 'provider' ? 'text-primary-light' : 'text-gray-400'}`}>
-                  Service Provider
-                </span>
+                <span>Service Provider</span>
               </label>
             </div>
           </div>
-          <Button type="submit" variant="primary" size="lg" className="w-full">
-            Create Account
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
           </Button>
           <p className="text-center text-gray-400">
             Already have an account?{' '}

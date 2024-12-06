@@ -2,12 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Leaf } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import Container from './ui/Container';
 import Button from './ui/Button';
 import { ROUTES } from '../lib/constants';
 
 const Hero: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="relative min-h-screen flex items-center bg-background-dark">
@@ -35,19 +37,21 @@ const Hero: React.FC = () => {
               Streamline garbage collection with our eco-friendly platform—simple plans, quick requests, and real-time tracking.
             </p>
 
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                variant="primary" 
-                size="lg"
-                onClick={() => navigate(ROUTES.SIGNUP)}
-                className="bg-primary hover:bg-primary-dark transition-all duration-300"
+            {!user && (
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Get Started
-              </Button>
-            </motion.div>
+                <Button 
+                  variant="primary" 
+                  size="lg"
+                  onClick={() => navigate(ROUTES.SIGNUP)}
+                  className="bg-primary hover:bg-primary-dark transition-all duration-300"
+                >
+                  Get Started
+                </Button>
+              </motion.div>
+            )}
           </motion.div>
         </div>
       </Container>

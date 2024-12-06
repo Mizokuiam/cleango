@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/ui/Button';
@@ -9,16 +9,21 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+
     try {
       await signIn(email, password);
-      navigate(ROUTES.DASHBOARD);
+      // Navigation is handled in AuthContext
     } catch (err) {
+      console.error('Login error:', err);
       setError('Invalid email or password. Please try again.');
+      setLoading(false);
     }
   };
 
@@ -47,6 +52,7 @@ const Login: React.FC = () => {
               className="mt-1 block w-full rounded-md bg-background-dark border-primary/20 text-white placeholder-gray-400 focus:border-primary focus:ring focus:ring-primary/20"
               required
               placeholder="Enter your email"
+              disabled={loading}
             />
           </div>
           <div>
@@ -61,10 +67,17 @@ const Login: React.FC = () => {
               className="mt-1 block w-full rounded-md bg-background-dark border-primary/20 text-white placeholder-gray-400 focus:border-primary focus:ring focus:ring-primary/20"
               required
               placeholder="Enter your password"
+              disabled={loading}
             />
           </div>
-          <Button type="submit" variant="primary" size="lg" className="w-full">
-            Sign In
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
           </Button>
           <p className="text-center text-gray-400">
             Don't have an account?{' '}
