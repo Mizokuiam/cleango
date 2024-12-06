@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -10,6 +10,7 @@ import { ROUTES } from '../../lib/constants';
 const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -31,6 +32,8 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -44,14 +47,35 @@ const Navbar: React.FC = () => {
           <Logo />
           
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink to={ROUTES.FEATURES}>Why Us</NavLink>
-            <NavLink to={ROUTES.PRICING}>Pricing</NavLink>
+            <Link 
+              to={ROUTES.FEATURES}
+              className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                isActive(ROUTES.FEATURES) ? 'text-primary-light' : ''
+              }`}
+            >
+              Why Us
+            </Link>
+            <Link 
+              to={ROUTES.PRICING}
+              className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                isActive(ROUTES.PRICING) ? 'text-primary-light' : ''
+              }`}
+            >
+              Pricing
+            </Link>
           </div>
           
           <div className="hidden md:flex items-center gap-6">
             {user ? (
               <>
-                <NavLink to={ROUTES.DASHBOARD}>Dashboard</NavLink>
+                <Link 
+                  to={ROUTES.DASHBOARD}
+                  className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                    isActive(ROUTES.DASHBOARD) ? 'text-primary-light' : ''
+                  }`}
+                >
+                  Dashboard
+                </Link>
                 <Button
                   variant="outline"
                   size="sm"
@@ -62,7 +86,14 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <NavLink to={ROUTES.LOGIN}>Login</NavLink>
+                <Link 
+                  to={ROUTES.LOGIN}
+                  className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                    isActive(ROUTES.LOGIN) ? 'text-primary-light' : ''
+                  }`}
+                >
+                  Login
+                </Link>
                 <Link to={ROUTES.SIGNUP}>
                   <Button variant="primary" size="sm">
                     Get Started
@@ -72,7 +103,6 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden text-gray-300 hover:text-white"
@@ -85,7 +115,6 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -94,15 +123,42 @@ const Navbar: React.FC = () => {
             className="md:hidden py-4 border-t border-gray-800"
           >
             <div className="flex flex-col space-y-4">
-              <NavLink to={ROUTES.FEATURES}>Why Us</NavLink>
-              <NavLink to={ROUTES.PRICING}>Pricing</NavLink>
+              <Link 
+                to={ROUTES.FEATURES}
+                className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                  isActive(ROUTES.FEATURES) ? 'text-primary-light' : ''
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Why Us
+              </Link>
+              <Link 
+                to={ROUTES.PRICING}
+                className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                  isActive(ROUTES.PRICING) ? 'text-primary-light' : ''
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Pricing
+              </Link>
               {user ? (
                 <>
-                  <NavLink to={ROUTES.DASHBOARD}>Dashboard</NavLink>
+                  <Link 
+                    to={ROUTES.DASHBOARD}
+                    className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                      isActive(ROUTES.DASHBOARD) ? 'text-primary-light' : ''
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={handleSignOut}
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
+                    }}
                     className="w-full"
                   >
                     Sign Out
@@ -110,8 +166,20 @@ const Navbar: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <NavLink to={ROUTES.LOGIN}>Login</NavLink>
-                  <Link to={ROUTES.SIGNUP} className="w-full">
+                  <Link 
+                    to={ROUTES.LOGIN}
+                    className={`text-gray-300 hover:text-white transition-colors duration-300 ${
+                      isActive(ROUTES.LOGIN) ? 'text-primary-light' : ''
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link 
+                    to={ROUTES.SIGNUP} 
+                    className="w-full"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
                     <Button variant="primary" size="sm" className="w-full">
                       Get Started
                     </Button>
@@ -125,14 +193,5 @@ const Navbar: React.FC = () => {
     </motion.nav>
   );
 };
-
-const NavLink: React.FC<{ to: string; children: React.ReactNode }> = ({ to, children }) => (
-  <Link 
-    to={to} 
-    className="text-gray-300 hover:text-white transition-colors duration-300"
-  >
-    {children}
-  </Link>
-);
 
 export default Navbar;
