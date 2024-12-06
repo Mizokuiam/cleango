@@ -5,7 +5,7 @@ import Container from '../components/ui/Container';
 
 const Features: React.FC = () => {
   return (
-    <div className="py-32 bg-background-dark" id="features">
+    <div className="py-32 bg-background-dark" id="why-us">
       <Container>
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">

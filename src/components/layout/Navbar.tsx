@@ -31,6 +31,14 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      setIsMobileMenuOpen(false); // Close mobile menu after clicking
+    }
+  };
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -44,6 +52,12 @@ const Navbar: React.FC = () => {
           <Logo />
           
           <div className="hidden md:flex items-center gap-6">
+            <button 
+              onClick={() => scrollToSection('why-us')}
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Why Us
+            </button>
             {user ? (
               <>
                 <Link to={ROUTES.DASHBOARD} className="text-gray-300 hover:text-white transition-colors">
@@ -91,6 +105,12 @@ const Navbar: React.FC = () => {
             className="md:hidden py-4 border-t border-gray-800"
           >
             <div className="flex flex-col space-y-4">
+              <button 
+                onClick={() => scrollToSection('why-us')}
+                className="text-gray-300 hover:text-white transition-colors text-left"
+              >
+                Why Us
+              </button>
               {user ? (
                 <>
                   <Link to={ROUTES.DASHBOARD} className="text-gray-300 hover:text-white transition-colors">
