@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
@@ -10,7 +10,6 @@ import { ROUTES } from '../../lib/constants';
 const Navbar: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -32,8 +31,6 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const isActive = (path: string) => location.pathname === path;
-
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -46,34 +43,10 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between h-20">
           <Logo />
           
-          <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              to={ROUTES.FEATURES}
-              className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                isActive(ROUTES.FEATURES) ? 'text-primary-light' : ''
-              }`}
-            >
-              Why Us
-            </Link>
-            <Link 
-              to={ROUTES.PRICING}
-              className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                isActive(ROUTES.PRICING) ? 'text-primary-light' : ''
-              }`}
-            >
-              Pricing
-            </Link>
-          </div>
-          
           <div className="hidden md:flex items-center gap-6">
             {user ? (
               <>
-                <Link 
-                  to={ROUTES.DASHBOARD}
-                  className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                    isActive(ROUTES.DASHBOARD) ? 'text-primary-light' : ''
-                  }`}
-                >
+                <Link to={ROUTES.DASHBOARD} className="text-gray-300 hover:text-white transition-colors">
                   Dashboard
                 </Link>
                 <Button
@@ -86,12 +59,7 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <>
-                <Link 
-                  to={ROUTES.LOGIN}
-                  className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                    isActive(ROUTES.LOGIN) ? 'text-primary-light' : ''
-                  }`}
-                >
+                <Link to={ROUTES.LOGIN} className="text-gray-300 hover:text-white transition-colors">
                   Login
                 </Link>
                 <Link to={ROUTES.SIGNUP}>
@@ -123,42 +91,15 @@ const Navbar: React.FC = () => {
             className="md:hidden py-4 border-t border-gray-800"
           >
             <div className="flex flex-col space-y-4">
-              <Link 
-                to={ROUTES.FEATURES}
-                className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                  isActive(ROUTES.FEATURES) ? 'text-primary-light' : ''
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Why Us
-              </Link>
-              <Link 
-                to={ROUTES.PRICING}
-                className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                  isActive(ROUTES.PRICING) ? 'text-primary-light' : ''
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Pricing
-              </Link>
               {user ? (
                 <>
-                  <Link 
-                    to={ROUTES.DASHBOARD}
-                    className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                      isActive(ROUTES.DASHBOARD) ? 'text-primary-light' : ''
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  <Link to={ROUTES.DASHBOARD} className="text-gray-300 hover:text-white transition-colors">
                     Dashboard
                   </Link>
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
-                      handleSignOut();
-                      setIsMobileMenuOpen(false);
-                    }}
+                    onClick={handleSignOut}
                     className="w-full"
                   >
                     Sign Out
@@ -166,20 +107,10 @@ const Navbar: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Link 
-                    to={ROUTES.LOGIN}
-                    className={`text-gray-300 hover:text-white transition-colors duration-300 ${
-                      isActive(ROUTES.LOGIN) ? 'text-primary-light' : ''
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  <Link to={ROUTES.LOGIN} className="text-gray-300 hover:text-white transition-colors">
                     Login
                   </Link>
-                  <Link 
-                    to={ROUTES.SIGNUP} 
-                    className="w-full"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  <Link to={ROUTES.SIGNUP} className="w-full">
                     <Button variant="primary" size="sm" className="w-full">
                       Get Started
                     </Button>

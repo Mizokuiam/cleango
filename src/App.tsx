@@ -6,8 +6,6 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import Features from './pages/Features';
-import Pricing from './pages/Pricing';
 import { ROUTES } from './lib/constants';
 
 const App: React.FC = () => {
@@ -20,8 +18,6 @@ const App: React.FC = () => {
             <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
             <Route path={ROUTES.LOGIN} element={<Login />} />
             <Route path={ROUTES.SIGNUP} element={<Signup />} />
-            <Route path={ROUTES.FEATURES} element={<Features />} />
-            <Route path={ROUTES.PRICING} element={<Pricing />} />
           </Routes>
         </Layout>
       </AuthProvider>
